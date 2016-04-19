@@ -1,0 +1,48 @@
+{
+  "version": "1.0.0-*",
+  "description": "WarrantyLookupService Console Application",
+  "authors": [ "" ],
+  "tags": [ "" ],
+  "projectUrl": "",
+  "licenseUrl": "",
+
+
+  "configurations": {
+    "Debug": {
+      "compilationOptions": {
+        "define": [ "DEBUG", "TRACE" ]
+      }
+    },
+    "Release": {
+      "compilationOptions": {
+        "define": [ "RELEASE", "TRACE" ],
+        "optimize": true
+      }
+    }
+  },
+
+
+  "compilationOptions": {
+    "emitEntryPoint": true
+  },
+
+  "tooling": {
+    "defaultNamespace": "WarrantyLookupService"
+  },
+
+  "dependencies": {
+    "Newtonsoft.Json": "6.0.6"
+  },
+
+  "commands": {
+    "WarrantyLookupService": "WarrantyLookupService"
+  },
+
+  "frameworks": {
+    "dnx46": {
+      "dependencies": {
+        "RestSharp": "105.2.3"
+      }
+    }
+  }
+}

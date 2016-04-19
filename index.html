@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+        <script type="text/javascript" src="jquery.js"></script>
+    <script src="eventSubscriptions.js" ></script>
+    <!--<script src="requester.js" ></script>-->
+    <!--<script src="custom.js" ></script>-->
+    <script src="externalLookup.js" ></script>
+</head>
+
+<body>
+    <h1>Select a csv file or apply custom serial number search</h1>
+    <table>
+        <tr>
+            <td>
+                <label>Select a csv file</label>
+            </td>
+            <td>
+                <input id="uploadCsv" style="margin-left: 0; margin-bottom: 0;width:280px" type="file" title="upload" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel*"
+                />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Or enter serial number manually (format is &lt;sn&gt;[,&lt;type&gt;][;...n ]) </label>
+            </td>
+            <td>
+                <input type="text" id="manualInput" value="06CR836,7870" />
+            </td>
+            <td>
+                <input type="button" class="applybutton" id="manualApply" value="Apply" />
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label>Enter the pause (in milliseconds) between calls (e.g. 100)</label>
+            </td>
+            <td>
+                <input type="number" id="requestPause" value="0" />
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "electron-testapp",
+  "version": "1.0.0",
+  "description": "A Lenovo support test app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "author": "Anton Abyzov",
+  "license": "WTFPL",
+  "devDependencies": {
+    "electron-prebuilt": "^0.37.0"
+  },
+  "dependencies": {
+    "electron-edge": "^5.0.3-pre"
+  }
+}
