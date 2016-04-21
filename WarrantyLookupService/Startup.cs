@@ -12,14 +12,14 @@ namespace WarrantyLookupService
 {
     public class Startup
     {
-        public async Task<object> GetLookupData(dynamic input)
+        public Task<object> GetLookupData(dynamic input)
         {
             var executor = new RestCommandExecutor();
 
             var lookupData = new Tuple<string, string>(input.SerialNumber, input.MachineType);
             var result = executor.Post(lookupData);
 
-            return await Task.Run(() => result);
+            return result;
         }
     }
 }

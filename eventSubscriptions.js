@@ -1,11 +1,6 @@
-//var ipc = require("electron").ipcRenderer;
-
 
 var init = function () {
     document.querySelector('#uploadCsv').addEventListener('change', function (e) {
-
-
-
         var files = e.target.files;
         if (files.length > 1) {
             alert('Please select only one file');
@@ -21,7 +16,6 @@ var init = function () {
             alert('Please select a csv file');
             return;
         }
-
 
         if (typeof (FileReader) != "undefined") {
             var reader = new FileReader();
@@ -39,6 +33,7 @@ var init = function () {
 
                 if (window.lookupData != undefined) {
                     lines.forEach(function (element) {
+                        
                         window.lookupData(element, function (error, result) {
                             if (error) {
                                 console.log("An error occurred when requesting Lenovo Support")
@@ -47,15 +42,13 @@ var init = function () {
                                 var responseText = JSON.parse(result);
                                 if (!responseText.IsSucceeded)
                                     console.log(element.SerialNumber + ' error: ' + responseText.Message);
-                                else {                                    
+                                else {
                                     console.log(responseText.Data.MachineInfo.serial + ' product:' + responseText.Data.MachineInfo.product + ' status:' + responseText.Data.MachineInfo.status);
                                 }
                             }
 
                         });
                     }, this);
-
-
                 }
             }
             reader.readAsText(file);
@@ -68,8 +61,7 @@ var init = function () {
     });
 }
 
-
-var ipc = require("electron").ipcRenderer;
+// workaround to enable debugging, as breakpoint not hit without this delay
 var isDebug = true;
 
 if (isDebug) {
