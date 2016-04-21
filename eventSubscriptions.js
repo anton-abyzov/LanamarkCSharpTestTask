@@ -65,12 +65,6 @@ var init = function () {
                         if (index === lines.length) return;
                         var element = lines[index];
 
-                        // var lookupData = edge.func({
-                        //     assemblyFile: './WarrantyLookupService/bin/Debug/dnx46/WarrantyLookupService.dll',
-                        //     typeName: 'WarrantyLookupService.Startup',
-                        //     methodName: 'GetLookupData'
-                        // });
-
                         window.lookupData(element, function (error, result) {
                             // this callback can't use closures, need to think on how to reuse the same code for output
                             if (error) {
