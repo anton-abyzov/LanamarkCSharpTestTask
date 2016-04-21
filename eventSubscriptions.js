@@ -1,32 +1,6 @@
 
 var init = function () {
 
-    //function to display result from lenovo resource
-    var processResponse = function (error, result) {
-        if (error) {
-            console.log("An error occurred when requesting Lenovo Support")
-        }
-        else {
-            var responseText = JSON.parse(result);
-            if (!responseText.IsSucceeded)
-                console.log(element.SerialNumber + ' error: ' + responseText.Message);
-            else {
-                console.log(responseText.Data.MachineInfo.serial + ' product:' + responseText.Data.MachineInfo.product + ' status:' + responseText.Data.MachineInfo.status);
-            }
-        };
-    };
-
-    // parsing based on format 
-    var parseLine = function (line) {
-        var cells = line.split(",");
-        if (cells[0] == "") return;
-        var item = { SerialNumber: cells[0], MachineType: '' };
-        if (cells.length > 1) {
-            item.MachineType = cells[1];
-        };
-        return item;
-    }
-
     //onclick subscribe for fileUploader 
     document.querySelector('#uploadCsv').addEventListener('change', function (e) {
         var files = e.target.files;
@@ -53,41 +27,38 @@ var init = function () {
                 var lines = [];
                 for (var i = 0; i < rows.length; i++) {
                     var lookupItem = parseLine(rows[i]);
-                    if (lookupItem !== undefined)
-                        lines[i] = lookupItem;
+                    if (lookupItem === undefined) continue;
+                    lines[i] = lookupItem;
                 }
-                if (window.lookupData !== undefined) {
-                    var index = 0;
-                    var delay = window.requestPause;
-                    var cbClosure = processResponse;
-                    //recursive function to send with delay if specified
-                    var sendRequest = function (index) {
-                        if (index === lines.length) return;
-                        var element = lines[index];
+                if (window.lookupData === undefined) return;
+                var index = 0;
+                var delay = window.requestPause;
+                //recursive function to send with delay if specified
+                var sendRequest = function (index) {
+                    if (index === lines.length) return;
+                    var element = lines[index];
 
-                        window.lookupData(element, function (error, result) {
-                            // this callback can't use closures, need to think on how to reuse the same code for output
-                            if (error) {
-                                console.log("An error occurred when requesting Lenovo Support")
-                            }
-                            else {
-                                var responseText = JSON.parse(result);
-                                if (!responseText.IsSucceeded)
-                                    console.log(element.SerialNumber + ' error: ' + responseText.Message);
-                                else {
-                                    console.log(responseText.Data.MachineInfo.serial + ' product:' + responseText.Data.MachineInfo.product + ' status:' + responseText.Data.MachineInfo.status);
-                                }
-                            };
-                        });
+                    window.lookupData(element, function (error, result) {
+                        if (error) {
+                            console.log("An error occurred when requesting Lenovo Support");
+                            return;
+                        }                        
+                        var response = JSON.parse(result);                        
+                        if (!response.IsSucceeded)
+                            printNotFound(element.SerialNumber, response);
+                        else {
+                            printResult(response);
+                        };
+                    });
 
-                        setTimeout(function () {
-                            if (delay !== 0)
-                                console.log('paused at ' + js_yyyy_mm_dd_hh_mm_ss() + ' with delay ' + delay);
-                            sendRequest(++index);
-                        }, delay);
-                    }
-                    sendRequest(index);
+                    setTimeout(function () {
+                        if (delay !== 0)
+                            console.log('paused at ' + js_yyyy_mm_dd_hh_mm_ss() + ' with delay ' + delay);
+                        sendRequest(++index);
+                    }, delay);
                 }
+                sendRequest(index);
+
             }
             reader.readAsText(file);
 
@@ -99,24 +70,24 @@ var init = function () {
     //onclick subscribe for manual input
     $('#manualApply').click(function (e) {
         var inputArr = $('#manualInput')[0].value.split(';');
-        if (window.lookupData !== undefined) {
-            inputArr.map(function (item) {
-                window.lookupData(parseLine(item), function (error, result) {
-                    // this callback can't use closures, need to think on how to reuse the same code for output
-                    if (error) {
-                        console.log("An error occurred when requesting Lenovo Support")
-                    }
-                    else {
-                        var responseText = JSON.parse(result);
-                        if (!responseText.IsSucceeded)
-                            console.log(element.SerialNumber + ' error: ' + responseText.Message);
-                        else {
-                            console.log(responseText.Data.MachineInfo.serial + ' product:' + responseText.Data.MachineInfo.product + ' status:' + responseText.Data.MachineInfo.status);
-                        }
-                    };
-                });
+        if (window.lookupData === undefined) return;
+        inputArr.map(function (item) {
+            var lookupItem = parseLine(item);            
+            window.lookupData(lookupItem, function (error, result) {
+                // this callback can't use closures, need to think on how to reuse the same code for output
+                if (error) {
+                    console.log("An error occurred when requesting Lenovo Support")
+                    return;
+                }                
+                var response = JSON.parse(result);
+                if (!response.IsSucceeded)
+                    printNotFound(lookupItem.SerialNumber, response);
+                else {
+                    printResult(response);
+                }
+
             });
-        };
+        });
     });
 
     //setting delay time
@@ -124,6 +95,27 @@ var init = function () {
     $('#requestPause').on('change', function (e) {
         window.requestPause = $(e.target)[0].value;
     });
+
+    var printNotFound = function (serial, response) {
+        if (serial && response)
+            console.log(serial + ' error: ' + response.Message);
+    }
+
+    var printResult = function (response) {
+        if (response && response.Data && response.Data.MachineInfo)
+            console.log(response.Data.MachineInfo.serial + ' product:' + response.Data.MachineInfo.product + ' status:' + response.Data.MachineInfo.status);
+    }
+
+    // parsing based on format 
+    var parseLine = function (line) {
+        var cells = line.split(",");
+        if (cells[0] == "") return;
+        var item = { SerialNumber: cells[0], MachineType: '' };
+        if (cells.length > 1) {
+            item.MachineType = cells[1];
+        };
+        return item;
+    }
 
     function js_yyyy_mm_dd_hh_mm_ss() {
         now = new Date();
