@@ -15,7 +15,7 @@ namespace WarrantyLookupService
             var request = new RestRequest(UrlRpcName, Method.POST);
             request.AddParameter("SerialNumber", lookupData.Item1);
             //request.AddParameter("MachineType", lookupData.Item2);
-            var response = (Task<object>)client.GetContentAsync(request);
+            var response = client.GetContentAsync(request);
             return response;
 
         }

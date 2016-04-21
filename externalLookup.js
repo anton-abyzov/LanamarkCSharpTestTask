@@ -8,8 +8,6 @@ var init = function () {
         typeName: 'WarrantyLookupService.Startup',
         methodName: 'GetLookupData'
     });
-    
-     //window.lookupData = edge.func('WarrantyLookupService/bin/Debug/dnx46/WarrantyLookupService.dll');
 }
 
 var isDebug = true;
