@@ -1,13 +1,26 @@
 
 var init = function () {
-    //function to display result from lenovo resource
 
+    //function to display result from lenovo resource
+    var processResponse = function (error, result) {
+        if (error) {
+            console.log("An error occurred when requesting Lenovo Support")
+        }
+        else {
+            var responseText = JSON.parse(result);
+            if (!responseText.IsSucceeded)
+                console.log(element.SerialNumber + ' error: ' + responseText.Message);
+            else {
+                console.log(responseText.Data.MachineInfo.serial + ' product:' + responseText.Data.MachineInfo.product + ' status:' + responseText.Data.MachineInfo.status);
+            }
+        };
+    };
 
     // parsing based on format 
     var parseLine = function (line) {
         var cells = line.split(",");
         if (cells[0] == "") return;
-        var item = { SerialNumber: cells[0] };
+        var item = { SerialNumber: cells[0], MachineType: '' };
         if (cells.length > 1) {
             item.MachineType = cells[1];
         };
@@ -43,16 +56,23 @@ var init = function () {
                     if (lookupItem !== undefined)
                         lines[i] = lookupItem;
                 }
-                debugger;
                 if (window.lookupData !== undefined) {
                     var index = 0;
                     var delay = window.requestPause;
+                    var cbClosure = processResponse;
+                    //recursive function to send with delay if specified
                     var sendRequest = function (index) {
                         if (index === lines.length) return;
                         var element = lines[index];
-                        //debugger;
-                        var cbResponseReceived = function (error, result) {
-                            //debugger;
+
+                        // var lookupData = edge.func({
+                        //     assemblyFile: './WarrantyLookupService/bin/Debug/dnx46/WarrantyLookupService.dll',
+                        //     typeName: 'WarrantyLookupService.Startup',
+                        //     methodName: 'GetLookupData'
+                        // });
+
+                        window.lookupData(element, function (error, result) {
+                            // this callback can't use closures, need to think on how to reuse the same code for output
                             if (error) {
                                 console.log("An error occurred when requesting Lenovo Support")
                             }
@@ -64,10 +84,11 @@ var init = function () {
                                     console.log(responseText.Data.MachineInfo.serial + ' product:' + responseText.Data.MachineInfo.product + ' status:' + responseText.Data.MachineInfo.status);
                                 }
                             };
-                        };
-                        window.lookupData(element, cbResponseReceived);
+                        });
 
                         setTimeout(function () {
+                            if (delay !== 0)
+                                console.log('paused at ' + js_yyyy_mm_dd_hh_mm_ss() + ' with delay ' + delay);
                             sendRequest(++index);
                         }, delay);
                     }
@@ -86,7 +107,20 @@ var init = function () {
         var inputArr = $('#manualInput')[0].value.split(';');
         if (window.lookupData !== undefined) {
             inputArr.map(function (item) {
-                window.lookupData(parseLine(item), cbResponseReceived);
+                window.lookupData(parseLine(item), function (error, result) {
+                    // this callback can't use closures, need to think on how to reuse the same code for output
+                    if (error) {
+                        console.log("An error occurred when requesting Lenovo Support")
+                    }
+                    else {
+                        var responseText = JSON.parse(result);
+                        if (!responseText.IsSucceeded)
+                            console.log(element.SerialNumber + ' error: ' + responseText.Message);
+                        else {
+                            console.log(responseText.Data.MachineInfo.serial + ' product:' + responseText.Data.MachineInfo.product + ' status:' + responseText.Data.MachineInfo.status);
+                        }
+                    };
+                });
             });
         };
     });
@@ -96,6 +130,18 @@ var init = function () {
     $('#requestPause').on('change', function (e) {
         window.requestPause = $(e.target)[0].value;
     });
+
+    function js_yyyy_mm_dd_hh_mm_ss() {
+        now = new Date();
+        year = "" + now.getFullYear();
+        month = "" + (now.getMonth() + 1); if (month.length == 1) { month = "0" + month; }
+        day = "" + now.getDate(); if (day.length == 1) { day = "0" + day; }
+        hour = "" + now.getHours(); if (hour.length == 1) { hour = "0" + hour; }
+        minute = "" + now.getMinutes(); if (minute.length == 1) { minute = "0" + minute; }
+        second = "" + now.getSeconds(); if (second.length == 1) { second = "0" + second; }
+        millisecond = "" + now.getMilliseconds(); if (millisecond.length == 1) { second = "0" + second; }
+        return year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second + ":" + millisecond;
+    }
 }
 
 // workaround to enable debugging, as breakpoint not hit without this delay

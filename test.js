@@ -2,89 +2,70 @@
 var init = function () {
     debugger;
 
-    var lines = [1, 2, 5, 4, 9, 3, 4];
+    var add7 = edge.func(function () {/*
+	using System.Threading.Tasks;
 
-    var promise = Promise.resolve();
+	public class Startup
+	{
+		public async Task<object> Invoke(object input)
+		{
+			return this.Add7((int)input);
+		}
 
-    // promise = new Promise(function (resolve, reject) {
-    //     console.log(lines[0]);
-    //     resolve();
-    // });
+		int Add7(int v) 
+		{
+			return Helper.Add7(v);
+		}
+	}
 
-    // promise.then(function () {
-    //     return new Promise(function (resolve, reject) {
+	static class Helper
+	{
+		public static int Add7(int v)
+		{
+			return v + 7;
+		}
+	}
+*/});
 
-    //         setTimeout(function () {
-    //             console.log('Pause 1');
-    //             resolve();
-    //         }, 1000);
-    //         reject();
-    //     });
-    // });
-    var index = 0;
-    var readLine = function (index) {
-        if (index === lines.length) return;
-        var line = lines[index];
-
-        var cb = function (resp, temp) {
-            debugger;
-            console.log('done ' + line + index);
-        };
-        
-        var err = function (resp, temp) {
-            debugger;
-            console.log('er ' + line + index);
-        };
-
-        debugger;
-        //setTimeout(function () {
-        console.log('Sending request ' + index);
-        var get = $.get('http://minifootball.by', cb);
-        // get.done(cb)//.then(sleep(3000));
-        //     .fail(cb);
-        //sleep(4000);
-        setTimeout(function () {
-            index++;
-            readLine(index);
-        }, 500);
-
-        //}, 3000);
-
-        //return pr; 
-        //.then(sleep(3000));       
-    }
-
-    readLine(index);
-
-
-    function sleep(delay) {
-        debugger;
-        var start = parseInt(new Date().getTime());
-        while (
-            new Date().getTime() < (start + parseInt(delay))
-        );
-        console.log('pause');
-    }
-
-    var timeout = setTimeout(function () {
-        console.log('Pause 1');
-    }, 1000);
-    debugger;
-    //var resps = lines.map(readLine);
+    add7(12, function (error, result) {
+        if (error) throw error;
+        console.log(result);
+    });
 
 
 
 
 
-    // promise.then(Promise.resolve(
-    //         sleep(1000)
-    // ));
 
-    // promise.then(function () {
-    //     debugger;
-    //     console.log(lines[1]);
-    // })
 
+	var index = 0;
+	debugger;
+	var cb = function (error, result) {
+		console.log('done');
+	};
+	var rec = function (index) {
+		if (index === 100) return;
+
+		var test = edge.func({
+			assemblyFile: './WarrantyLookupService/bin/Debug/dnx46/WarrantyLookupService.dll',
+			typeName: 'WarrantyLookupService.Startup',
+			methodName: 'GetLookupData'
+		});
+
+
+
+		test({ "SerialNumber": "KQZMTV4", "MachineType": '7978' }, cb);
+
+		setTimeout(function () {
+			rec(++index);
+		}, 500);
+
+
+	}
+	rec(0);
+	// for (var i = 0; i < 100; i++) {
+
+	// }
 }
 
 setTimeout(function () {
