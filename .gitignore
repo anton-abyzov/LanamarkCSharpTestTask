@@ -1,1 +1,3 @@
 node_modules
+*-ia32
+*-x64
